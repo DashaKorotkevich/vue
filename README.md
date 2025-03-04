@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # vue-project
 
 ## Project setup
@@ -17,3 +18,7 @@ npm run build
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+=======
+# vue
+изучение vue
+>>>>>>> 87ceead1445039eafa3330a1df4726a237e3c620
