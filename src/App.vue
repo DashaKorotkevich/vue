@@ -1,9 +1,11 @@
 <template>
   <div class="app">
-    <post-form
-    @create="createPost"/>
-    <post-list :posts="posts"
-    @remove="removePost"/>
+    <my-dialog v-model:show="dialogVisible">
+      <post-form @create="createPost"/>
+    </my-dialog>
+    <post-list 
+      :posts="posts"
+      @remove="removePost"/>
   </div>
 </template>
 
@@ -33,6 +35,7 @@ import PostList from '@/components/PostList.vue';
           body: 'description 3',
         }, 
       ], 
+      dialogVisible: false,
     }
   },
   methods: {
