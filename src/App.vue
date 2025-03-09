@@ -1,8 +1,11 @@
 <template>
   <div class="app">
-    <my-button @click = "showDialog">
+    <div class="app_btn">
+      <my-button @click = "showDialog">
       Создать
-    </my-button>
+      </my-button>
+      <my-select></my-select>
+    </div>
     <my-dialog v-model:show = "dialogVisible">
       <post-form @create = "createPost"/>
     </my-dialog>
@@ -71,5 +74,9 @@ import axios from 'axios';
 }
 a,button{
   cursor: pointer;
+}
+.app_btn{
+  display: flex;
+  justify-content: space-between;
 }
 </style>
