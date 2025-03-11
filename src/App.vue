@@ -1,18 +1,34 @@
 <template>
   <div class="app">
+    <my-input v-model="searchQuery" placeholder="Поиск..."></my-input>
     <div class="app_btn">
       <my-button @click = "showDialog">
       Создать
       </my-button>
-      <my-select></my-select>
+      <my-select
+        v-model="selectedSort"
+        :options="sortOptions"
+      />
     </div>
     <my-dialog v-model:show = "dialogVisible">
       <post-form @create = "createPost"/>
     </my-dialog>
     <post-list v-if = "!isPostsLoading"
-      :posts="posts"
+      :posts="sortedAndSearchedPosts"
       @remove="removePost"/>
     <div v-else> идет загрузка</div>
+    <div class="page__wrapper">
+      <div 
+        v-for="pageNumber in totalPage"
+        :key="pageNumber"
+        class="page"
+        :class="{
+          'current-page': page === pageNumber
+        }"
+        @click="changePage(pageNumber)"
+        >{{ pageNumber }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -29,13 +45,21 @@ import axios from 'axios';
       posts: [], 
       dialogVisible: false,
       isPostsLoading: false,
+      searchQuery: '',
+      selectedSort: '',
+      page: 1,
+      totalPage: 0,
+      limitPost: 10,
+      sortOptions: [
+        {value: 'title', name: 'по названию'},
+        {value: 'body', name: 'по описанию'}
+      ],
     }
   },
   methods: {
     createPost(post){
       this.posts.push(post);
       this.dialogVisible = false;
-      console.log(post)
     },
     removePost(post){
       this.posts = this.posts.filter((p) => p.id !== post.id)
@@ -43,10 +67,20 @@ import axios from 'axios';
     showDialog(){
       this.dialogVisible = true;
     },
+    changePage(newPageNumber){
+      this.page = newPageNumber;
+      this.fetchPosts();
+    },
     async fetchPosts() {
       try{
           this.isPostsLoading = true;        
-          const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+          const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+            params: {
+              _page: this.page,
+              _limitPost: this.limitPost
+            }
+          });
+          this.totalPage = Math.ceil(response.headers['x-total-count'] / this.limitPost);
           this.posts = response.data;
       }
       catch (e) {
@@ -59,6 +93,19 @@ import axios from 'axios';
   },
   mounted() {
     this.fetchPosts();
+  },
+  watch: {
+    selectedSort(newValue){
+      this.posts.sort((post1, post2) => post1[this.selectedSort]?.localeCompare(post2[this.selectedSort]))
+    }
+  },
+  computed: {
+    sortedPosts(){
+      return [...this.posts].sort((post1, post2) => post1[this.selectedSort]?.localeCompare(post2[this.selectedSort]))
+    },
+    sortedAndSearchedPosts(){
+      return this.sortedPosts.filter((post) => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
+    }
   }
  }
 </script>
@@ -78,5 +125,17 @@ a,button{
 .app_btn{
   display: flex;
   justify-content: space-between;
+  margin: 15px 0;
+}
+.page__wrapper{
+  display: flex;
+  margin-top: 15px;
+}
+.page{
+  border: 1px solid black;
+  padding: 10px;
+}
+.current-page{
+  border: 2px solid teal;
 }
 </style>
