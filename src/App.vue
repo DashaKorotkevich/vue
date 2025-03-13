@@ -17,7 +17,11 @@
       :posts="sortedAndSearchedPosts"
       @remove="removePost"/>
     <div v-else> идет загрузка</div>
-    <div class="page__wrapper">
+    <div ref="observer" class="observer"></div><!--мы можем отследить когда этот блок появился в поле видимости страницы, для этого используем API Intersection observer.
+    Когда у элемента есть ref, vue создает объект, который можно использовать для доступа к этому элементу или компоненту в коде.
+    ref="observer" означает, что вы создаете ссылку на этот div элемент с именем observer. После этого вы можете получить доступ к этому элементу в вашем компоненте, используя this.$refs.observer.
+    -->
+    <!--<div class="page__wrapper">
       <div 
         v-for="pageNumber in totalPage"
         :key="pageNumber"
@@ -28,7 +32,7 @@
         @click="changePage(pageNumber)"
         >{{ pageNumber }}
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
@@ -67,17 +71,16 @@ import axios from 'axios';
     showDialog(){
       this.dialogVisible = true;
     },
-    changePage(newPageNumber){
+    /*changePage(newPageNumber){
       this.page = newPageNumber;
-      this.fetchPosts();
-    },
+    },*/
     async fetchPosts() {
       try{
           this.isPostsLoading = true;        
           const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
             params: {
               _page: this.page,
-              _limitPost: this.limitPost
+              _limit: this.limitPost
             }
           });
           this.totalPage = Math.ceil(response.headers['x-total-count'] / this.limitPost);
@@ -89,15 +92,46 @@ import axios from 'axios';
       finally {
         this.isPostsLoading = false;
       }
+    },
+    async laodMorePosts() {
+      try{
+          this.page += 1;       
+          const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+            params: {
+              _page: this.page,
+              _limit: this.limitPost
+            }
+          });
+          this.totalPage = Math.ceil(response.headers['x-total-count'] / this.limitPost);
+          this.posts = [...this.posts, ...response.data];
+      }
+      catch (e) {
+        alert('error')
+      } 
     }
   },
   mounted() {
     this.fetchPosts();
+    const options = {
+      root: document.querySelector("#scrollArea"), // по умолчанию 
+      rootMargin: "0px",
+      threshold: 1.0,
+    };
+    const callback = (entries, observer) => { // отработает когда мы пересечем элемент, причем и при скроле вниз, и при скроле вверх
+      if(entries[0].isIntersecting && this.page < this.totalPage){
+        this.laodMorePosts();
+      }
+    }
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
   },
   watch: {
-    selectedSort(newValue){
+    /*page(){
+      this.fetchPosts();
+    }*/
+    /*selectedSort(newValue){
       this.posts.sort((post1, post2) => post1[this.selectedSort]?.localeCompare(post2[this.selectedSort]))
-    }
+    }*/
   },
   computed: {
     sortedPosts(){
