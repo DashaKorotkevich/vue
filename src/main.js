@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App'
 import components from '@/components/UI';
+import router from '@/router/router';
 
 console.log(components)
 
@@ -10,4 +11,6 @@ components.forEach(component => {
   app.component(component.name, component)
 })
 
-app.mount('#app'); 
+app
+  .use(router) // подобным образом подключаются любые библиотеки
+  .mount('#app'); 
