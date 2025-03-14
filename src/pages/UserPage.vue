@@ -16,7 +16,9 @@
       :posts="sortedAndSearchedPosts"
       @remove="removePost"/>
     <div v-else> идет загрузка</div>
-    <div ref="observer" class="observer"></div><!--мы можем отследить когда этот блок появился в поле видимости страницы, для этого используем API Intersection observer.
+    <div v-intersection="loadMorePosts" class="observer"></div>
+    <!--<div ref="observer" class="observer"></div>-->
+    <!--мы можем отследить когда этот блок появился в поле видимости страницы, для этого используем API Intersection observer.
     Когда у элемента есть ref, vue создает объект, который можно использовать для доступа к этому элементу или компоненту в коде.
     ref="observer" означает, что вы создаете ссылку на этот div элемент с именем observer. После этого вы можете получить доступ к этому элементу в вашем компоненте, используя this.$refs.observer.
     -->
@@ -31,7 +33,7 @@
         @click="changePage(pageNumber)"
         >{{ pageNumber }}
       </div>
-    </div>--> 
+    </div>-->
 </template>
 
 <script>
@@ -91,7 +93,7 @@ import axios from 'axios';
         this.isPostsLoading = false;
       }
     },
-    async laodMorePosts() {
+    async loadMorePosts() {
       try{
           this.page += 1;       
           const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
@@ -110,18 +112,18 @@ import axios from 'axios';
   },
   mounted() {
     this.fetchPosts();
-    const options = {
+    /*const options = {
       root: document.querySelector("#scrollArea"), // по умолчанию 
       rootMargin: "0px",
       threshold: 1.0,
     };
     const callback = (entries, observer) => { // отработает когда мы пересечем элемент, причем и при скроле вниз, и при скроле вверх
       if(entries[0].isIntersecting && this.page < this.totalPage){
-        this.laodMorePosts();
-      }
+        this.loadMorePosts();
+      } // условие для того, чтобы только при скроле вниз работало
     }
     const observer = new IntersectionObserver(callback, options);
-    observer.observe(this.$refs.observer);
+    observer.observe(this.$refs.observer);*/
   },
   watch: {
     /*page(){

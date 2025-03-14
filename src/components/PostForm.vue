@@ -9,7 +9,7 @@
         placeholder= "описание" 
         type="text"/>
       <my-button @click="createPost"
-      style="align-self: flex-end;"
+      style="align-self: flex-end; margin-top: 10px;"
       >Создать</my-button>
     </form>
 </template>
