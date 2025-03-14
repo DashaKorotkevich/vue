@@ -4,6 +4,7 @@ import components from '@/components/UI'; // для глобальной рег�
 import router from '@/router/router';
 /* import VIntersection from '@/directives/VIntersection'; */ //импорт для глобальной регистрации директивы
 import directives from '@/directives';
+import store from '@/store';
 
 const app = createApp(App)
 
@@ -18,5 +19,6 @@ directives.forEach(directive => {
 })
 
 app
+  .use(store) 
   .use(router) // подобным образом подключаются любые библиотеки
   .mount('#app'); 

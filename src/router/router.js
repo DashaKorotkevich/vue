@@ -1,6 +1,7 @@
 import About from "@/pages/About.vue";
 import Main from "@/pages/Main.vue"
 import PostIdPage from "@/pages/PostIdPage.vue";
+import PostPageWithStore from "@/pages/PostPageWithStore.vue";
 import UserPage from "@/pages/UserPage.vue";
 import { createRouter, createWebHistory } from "vue-router"
 
@@ -20,6 +21,10 @@ import { createRouter, createWebHistory } from "vue-router"
   {
     path: '/posts/:id', // url строка
     component: PostIdPage
+  },
+  {
+    path: '/store', // url строка
+    component: PostPageWithStore
   },
  ]
 
